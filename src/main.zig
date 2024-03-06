@@ -14,18 +14,18 @@ fn add(x: i32, y: i32) i32 {
     return arithmetic.add(x, y);
 }
 
+fn log(comptime format: []const u8, args: anytype) !void {
+    var stdout = std.io.getStdOut().writer();
+    try stdout.print(format, args);
+}
+
 pub fn main() !void {
     const x: i32 = 5;
     const y: i32 = 16;
     const z: i32 = add(x, y);
 
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
-
-    try stdout.print("{d}\n", .{rtc.RTC_CODEC_OPUS});
-    try stdout.print("{d} + {d} = {d}\n", .{ x, y, z });
-    try bw.flush();
+    try log("{d}\n", .{rtc.RTC_CODEC_OPUS});
+    try log("{d} + {d} = {d}\n", .{ x, y, z });
 }
 
 test "test add" {
