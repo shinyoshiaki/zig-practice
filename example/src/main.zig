@@ -1,23 +1,20 @@
 // src/main.zig
 
 const std = @import("std");
-// const mediasoupclient =
-//     @cImport({
-//     @cInclude("mediasoupclient.h");
-// });
-pub extern fn opus() i32;
 const mediasoupclient = @import("mediasoupclient");
 
-fn log(comptime format: []const u8, args: anytype) !void {
-    var stdout = std.io.getStdOut().writer();
-    try stdout.print(format, args);
-}
-
 pub fn main() !void {
-    try log("{d}\n", .{
-        mediasoupclient.add(0, 0),
-        // opus(),
-    });
-}
+    const offer = try mediasoupclient.Peer.create();
+    offer.init();
+    const ctx = offer.ctx;
 
-test "test add" {}
+    offer.createOffer();
+    const answer = try mediasoupclient.Peer.create();
+
+    std.time.sleep(500_000_000);
+
+    std.debug.print("ctx.offer {s}\n", .{
+        ctx.offer,
+    });
+    try answer.setRemoteDescription(ctx.offer, "answer");
+}
